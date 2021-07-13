@@ -38,7 +38,7 @@
                 <input type="hidden" name="cart_id" value="<?php print(h($cart['cart_id'])); ?>">
               </form>
             </td>
-            <td><?php print(number_format($cart['price'] * $cart['amount'])); ?>円</td>
+            <td><?php print(number_format(h($cart['price']) * h($cart['amount']))); ?>円</td>
             <td>
 
               <form method="post" action="cart_delete_cart.php">
