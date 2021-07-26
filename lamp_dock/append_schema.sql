@@ -27,11 +27,12 @@ CREATE TABLE `Purchase_details` (
 ALTER TABLE `Purchase_details`
   ADD PRIMARY KEY (`details_id`),
   ADD KEY `item_id` (`item_id`),
-  ADD KEY `purchase_id` (`purchase_id`);
+  ADD KEY (`purchase_id`);
 
 ALTER TABLE `Purchase_history`
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `purchase_id` (`purchase_id`);
+  ADD PRIMARY KEY (`purchase_id`),
+  ADD KEY `user_id` (`user_id`);
+  
 
 ALTER TABLE `Purchase_history`
   MODIFY `purchase_id` int(11) NOT NULL AUTO_INCREMENT;
