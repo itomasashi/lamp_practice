@@ -105,17 +105,53 @@ function purchase_carts($db, $carts){
   if(validate_cart_purchase($carts) === false){
     return false;
   }
-  foreach($carts as $cart){
-    if(update_item_stock(
+  $db->beginTransaction();
+  try{
+    insert_purchase_history($db, $carts[0]['user_id']);
+    $details_id = $db->lastInsertId();
+  
+    foreach($carts as $cart){
+      insert_purchase_details($db,$details_id,$cart['price'],$cart['amount'],$cart['item_id']);
+      
+      if(update_item_stock(
         $db, 
         $cart['item_id'], 
         $cart['stock'] - $cart['amount']
       ) === false){
-      set_error($cart['name'] . 'の購入に失敗しました。');
+        set_error($cart['name'] . 'の購入に失敗しました。');
+      }
     }
+    delete_user_carts($db, $carts[0]['user_id']);
+    $db->commit();
+  }catch(PDOException $e){
+    $db->rollback();
+    throw $e;
   }
-  
-  delete_user_carts($db, $carts[0]['user_id']);
+}
+
+function insert_purchase_history($db,$sql,$user_id){
+  $sql = "
+    INSERT INTO
+      purchase_history(
+        user_id
+        )
+    VALUES(?)
+  ";
+  return execute_query($db, $sql ,array($user_id));
+}
+
+function insert_purchase_details($db,$sql,$details_id,$price,$amount,$item_id){
+  $sql = "
+    INSERT INTO
+      purchase_details(
+        details_id,
+        price,
+        amount,
+        item_id
+        )
+    VALUES(?,?,?,?)
+  ";
+  return execute_query($db, $sql ,array($details_id,$price,$amount, $item_id,));
 }
 
 function delete_user_carts($db, $user_id){
