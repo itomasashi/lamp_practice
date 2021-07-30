@@ -108,14 +108,14 @@ function purchase_carts($db, $carts){
   $db->beginTransaction();
 
     if(insert_purchase_history($db, $carts[0]['user_id']) === false){
-      set_error('不正な操作が行われました。');
+      set_error('購入履歴の作成に失敗しました。');
       return false;
     }
     $purchase_id = $db->lastInsertId();
 
     foreach($carts as $cart){
       if(insert_purchase_details($db,$purchase_id,$cart['price'],$cart['amount'],$cart['item_id']) === false){
-        set_error('不正な操作が行われました。');
+        set_error($cart['name'] .'の購入明細の作成に失敗しました。');
       };
       
       if(update_item_stock(
@@ -147,18 +147,18 @@ function insert_purchase_history($db,$sql,$user_id){
   return execute_query($db, $sql ,array($user_id));
 }
 
-function insert_purchase_details($db,$sql,$details_id,$price,$amount,$item_id){
+function insert_purchase_details($db,$sql,$purchase_id,$price,$amount,$item_id){
   $sql = "
     INSERT INTO
       purchase_details(
-        details_id,
+        purchase_id,
         price,
         amount,
         item_id
         )
     VALUES(?,?,?,?)
   ";
-  return execute_query($db, $sql ,array($details_id,$price,$amount, $item_id,));
+  return execute_query($db, $sql ,array($purchase_id,$price,$amount, $item_id,));
 }
 
 function delete_user_carts($db, $user_id){
