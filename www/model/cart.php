@@ -106,12 +106,17 @@ function purchase_carts($db, $carts){
     return false;
   }
   $db->beginTransaction();
-  try{
-    insert_purchase_history($db, $carts[0]['user_id']);
-    $details_id = $db->lastInsertId();
-  
+
+    if(insert_purchase_history($db, $carts[0]['user_id']) === false){
+      set_error('不正な操作が行われました。');
+      return false;
+    }
+    $purchase_id = $db->lastInsertId();
+
     foreach($carts as $cart){
-      insert_purchase_details($db,$details_id,$cart['price'],$cart['amount'],$cart['item_id']);
+      if(insert_purchase_details($db,$purchase_id,$cart['price'],$cart['amount'],$cart['item_id']) === false){
+        set_error('不正な操作が行われました。');
+      };
       
       if(update_item_stock(
         $db, 
@@ -122,11 +127,13 @@ function purchase_carts($db, $carts){
       }
     }
     delete_user_carts($db, $carts[0]['user_id']);
-    $db->commit();
-  }catch(PDOException $e){
+
+    if(has_error() === true){
     $db->rollback();
-    throw $e;
-  }
+    return false;
+    }
+    $db->commit();
+    return true;
 }
 
 function insert_purchase_history($db,$sql,$user_id){
