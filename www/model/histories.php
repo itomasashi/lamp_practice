@@ -13,11 +13,11 @@ function get_history($db, $user_id){
     JOIN
       Purchase_details
     ON
-      Purachse_history.purchase_id = Purchase_details.purchase_id
+      Purchase_history.purchase_id = Purchase_details.purchase_id
     WHERE
       user_id = ? 
     GROUP BY
-      purachse_id
+      purchase_id
     ORDER BY
       created desc
   ";
@@ -27,11 +27,10 @@ function get_history($db, $user_id){
 function get_detail($db, $purchase_id){
   $sql = "
     SELECT
+      items.name
       Purchase_details.price,
       Purchase_details.amount,
-      Purchase_details.created,
-      SUM(Purchase_details.price * Purchase_details.amount) AS subtotal,
-      items.name
+      Purchase_details.created
     FROM
       Purchase_details
     JOIN
@@ -40,8 +39,6 @@ function get_detail($db, $purchase_id){
       Purchase_details.item_id = items.item_id
     WHERE
       purchase_id = ?
-    GROUP BY
-      Purcase_details.price, Purchase_details.amount, Purchase_details.created, items.name
   ";
   return fetch_all_query($db, $sql, array($purchase_id));
 }

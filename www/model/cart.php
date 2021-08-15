@@ -136,7 +136,7 @@ function purchase_carts($db, $carts){
     return true;
 }
 
-function insert_purchase_history($db,$sql,$user_id){
+function insert_purchase_history($db,$user_id){
   $sql = "
     INSERT INTO
       purchase_history(
@@ -144,10 +144,10 @@ function insert_purchase_history($db,$sql,$user_id){
         )
     VALUES(?)
   ";
-  return execute_query($db, $sql ,array($user_id));
+  return execute_query($db,$sql,array($user_id));
 }
 
-function insert_purchase_details($db,$sql,$purchase_id,$price,$amount,$item_id){
+function insert_purchase_details($db,$purchase_id,$price,$amount,$item_id){
   $sql = "
     INSERT INTO
       purchase_details(
@@ -158,7 +158,7 @@ function insert_purchase_details($db,$sql,$purchase_id,$price,$amount,$item_id){
         )
     VALUES(?,?,?,?)
   ";
-  return execute_query($db, $sql ,array($purchase_id,$price,$amount, $item_id,));
+  return execute_query($db,$sql,array($purchase_id,$price,$amount,$item_id,));
 }
 
 function delete_user_carts($db, $user_id){
