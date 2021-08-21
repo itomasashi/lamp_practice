@@ -22,13 +22,11 @@
         </tr>
       </thead>
       <tbody>
-      <?php foreach((array)$histories as $history){ ?>
         <tr>
           <td><?php print($history['purchase_id']); ?></td>
           <td><?php print($history['created']); ?></td>
           <td><?php print($history['total']); ?></td>
         </tr>
-      <?php } ?>
       </tbody>
     </table>
 
@@ -42,7 +40,7 @@
         </tr>
       </thead>
       <tbody>
-      <?php foreach((array)$details as $detail){ ?>
+      <?php foreach($details as $detail){ ?>
         <tr>
           <td><?php print($detail['name']); ?></td>
           <td><?php print($detail['price']); ?></td>
