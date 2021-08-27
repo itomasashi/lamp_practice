@@ -58,22 +58,20 @@ function get_rank_items($db, $is_open = false){
         FROM
           Purchase_details
         WHERE
-          Purchase_details.item_id) AS sum_amount
+          Purchase_details.item_id = items.item_id) AS sum_amount
     FROM
       items
-    JOIN
-      Purchase_details
   ';
   if($is_open === true){
     $sql .= '
       WHERE
         status = 1
-      ORDER BY
-        sum_amount desc
-      LIMIT 3
-    ';
-  }
-
+        ';
+      }
+      $sql .= 'ORDER BY
+      sum_amount desc
+      LIMIT 3';
+      
   return fetch_all_query($db, $sql);
 }
 
