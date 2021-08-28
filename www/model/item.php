@@ -43,6 +43,38 @@ function get_items($db, $is_open = false){
   return fetch_all_query($db, $sql);
 }
 
+
+function get_rank_items($db, $is_open = false){
+  $sql = '
+    SELECT
+      items.item_id, 
+      items.name,
+      items.stock,
+      items.price,
+      items.image,
+      items.status,
+      (SELECT
+        SUM(Purchase_details.amount)
+        FROM
+          Purchase_details
+        WHERE
+          Purchase_details.item_id = items.item_id) AS sum_amount
+    FROM
+      items
+  ';
+  if($is_open === true){
+    $sql .= '
+      WHERE
+        status = 1
+        ';
+      }
+      $sql .= 'ORDER BY
+      sum_amount desc
+      LIMIT 3';
+      
+  return fetch_all_query($db, $sql);
+}
+
 function get_all_items($db){
   return get_items($db);
 }
@@ -50,6 +82,11 @@ function get_all_items($db){
 function get_open_items($db){
   return get_items($db, true);
 }
+
+function get_rank_open_items($db){
+  return get_rank_items($db, true);
+}
+
 
 function regist_item($db, $name, $price, $stock, $status, $image){
   $filename = get_upload_filename($image);
